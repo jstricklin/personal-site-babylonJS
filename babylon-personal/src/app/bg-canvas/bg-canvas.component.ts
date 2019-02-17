@@ -29,27 +29,40 @@ export class BgCanvasComponent implements OnInit {
         const scene = new BABYLON.Scene(this.engine);
 
         // Add a camera to the scene and attach it to the canvas
-        const camera = new BABYLON.ArcRotateCamera('Camera', Math.PI / 2, Math.PI / 4, 4, BABYLON.Vector3.Zero(), scene);
+        const camera = new BABYLON.ArcRotateCamera('Camera', Math.PI / 2, Math.PI / 2.6, 6, BABYLON.Vector3.Zero(), scene);
         // camera.attachControl(this.canvas.nativeElement, true);
 
         // Add lights to the scene
-        const light1 = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(1, 1, 0), scene);
-        const light2 = new BABYLON.PointLight('light2', new BABYLON.Vector3(0, 1, -1), scene);
+        const light1 = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(3, 3, 0), scene);
+        const light2 = new BABYLON.PointLight('light2', new BABYLON.Vector3(-2, 3, 1), scene);
 
         light1.intensity = 0.7;
         light2.intensity = 0.7;
 
+        // create shadowmap below
+        const shadowGen1 = new BABYLON.ShadowGenerator(1024, light2);
+
         // This is where you create and manipulate meshes
-        const sphere = BABYLON.MeshBuilder.CreateSphere('sphere', {  }, scene);
+        const cube = BABYLON.MeshBuilder.CreateBox('cube', {  }, scene);
+        shadowGen1.getShadowMap().renderList.push(cube);
+        cube.rotation = new BABYLON.Vector3(45, 45, 45);
+        cube.position = new BABYLON.Vector3(0, 0, 0);
         // texture sphere below
-        const sphereMat = new BABYLON.StandardMaterial('sphereMat', scene);
-        sphereMat.diffuseColor = new BABYLON.Color3(.4, .3, .6);
-        sphere.material = sphereMat;
-        // const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 100, height: 100, subdivisions: 4 }, scene);
+        const objMat = new BABYLON.StandardMaterial('cubeMat', scene);
+        objMat.diffuseColor = new BABYLON.Color3(.4, .3, .6);
+        cube.material = objMat;
+        this.rotator(cube);
 
+        const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 100, height: 100, subdivisions: 4 }, scene);
+        ground.position = new BABYLON.Vector3(0, -2, 0);
+        ground.receiveShadows = true;
         return scene;
-
     }
-
+    rotator(obj: BABYLON.Mesh) {
+        obj.rotate( new BABYLON.Vector3(0, 1, 0), .005, BABYLON.Space.WORLD);
+        setTimeout(() => {
+            this.rotator(obj);
+        }, 1);
+    }
 }
 
