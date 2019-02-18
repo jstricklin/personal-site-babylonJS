@@ -23,6 +23,38 @@ export class BgCanvasComponent implements OnInit {
         // Add a camera to the scene and attach it to the canvas
         const camera = new BABYLON.ArcRotateCamera('Camera', Math.PI / 2.5, Math.PI / 6, 12, BABYLON.Vector3.Zero(), scene);
         // camera.attachControl(this.canvas.nativeElement, true);
+        /*
+        This is where we create the rendering pipeline and attach it to the camera.
+        The pipeline accepts many parameters, but all of them are optional.
+        Depending on what you set in your parameters array, some effects will be
+        enabled or disabled. Here is a list of the possible parameters:
+        {
+               chromatic_aberration: number;       // from 0 to x (1 for realism)
+               edge_blur: number;                  // from 0 to x (1 for realism)
+               distortion: number;                 // from 0 to x (1 for realism)
+               grain_amount: number;               // from 0 to 1
+               grain_texture: BABYLON.Texture;     // texture to use for grain effect; if unset, use random B&W noise
+               dof_focus_distance: number;         // depth-of-field: focus distance; unset to disable (disabled by default)
+               dof_aperture: number;               // depth-of-field: focus blur bias (default: 1)
+               dof_darken: number;                 // depth-of-field: darken that which is out of focus (from 0 to 1, disabled by default)
+               dof_pentagon: boolean;              // depth-of-field: makes a pentagon-like "bokeh" effect
+               dof_gain: number;                   // depth-of-field: highlights gain; unset to disable (disabled by default)
+               dof_threshold: number;              // depth-of-field: highlights threshold (default: 1)
+               blur_noise: boolean;                // add a little bit of noise to the blur (default: true)
+        }
+         */
+        // const lensEffect = new BABYLON.LensRenderingPipeline('dof-lens', {
+        //     edge_blur: 1.0,
+        //     chromatic_aberration: 1.0,
+        //     distortion: 1.0,
+        //     dof_focus_distance: 50,
+        //      dof_aperture: 6.0,
+        //     grain_amount: 1.0,
+        //     dof_pentagon: true,
+        //     dof_gain: 1.0,
+        //     dof_threshold: 1.0,
+        //     dof_darken: 0.25,
+        // }, scene, 1.0, [camera]);
 
         BABYLON.SceneLoader.Append(
             // '../../assets/scenes/grey-scene/',
@@ -33,64 +65,37 @@ export class BgCanvasComponent implements OnInit {
             (loadedScene: BABYLON.Scene) => {
                 console.log(loadedScene.activeCamera);
                 loadedScene.activeCamera.attachControl(this.canvas.nativeElement, true);
-                // camera.attachControl(this.canvas.nativeElement, true);
-            }
-        );
-        // BABYLON.Tools.LoadFile('../../assets/scenes/grey-scene/scene/scenea7af9e4e-df35-4baa-91bc-29652ed697eb.editorproject',
-        //     (data: string) => {
-        //     Extensions.RoolUrl = '../../assets/scenes/';
-        //     Extensions.ApplyExtensions(scene, JSON.parse(data));
-        // });
-        // BABYLON.Tools.LoadFile('../../assets/scenes/scene/project.editorproject', (data: string) => {
-        //     Extensions.RoolUrl = '../../assets/scenes/scene/';
-        //     Extensions.ApplyExtensions(scene, JSON.parse(data));
-        // });
-        this.engine.runRenderLoop(() => {
-            scene.render();
-        });
-        window.addEventListener('resize', () => {
-            this.engine.resize();
-        });
+                const lensEffect = new BABYLON.LensRenderingPipeline('dof-lens', {
+                    edge_blur: 1.0,
+                    // chromatic_aberration: 1.0,
+                    distortion: .25,
+                    dof_focus_distance: 4,
+                    dof_aperture: 4.0,
+                    grain_amount: 1.0,
+                    dof_pentagon: true,
+                    dof_gain: 1.0,
+                    dof_threshold: 1.0,
+                    dof_darken: 0.2,
+            }, scene, 1.0, [loadedScene.activeCamera]);
+        // loadedScene.activeCamera.inputs.add(new BABYLON.FreeCameraKeyboardMoveInput());
+        // camera.attachControl(this.canvas.nativeElement, true);
     }
-    // createScene() {
-    //     // Create the scene space
-    //     const scene = new BABYLON.Scene(this.engine);
-
-    //     // Add a camera to the scene and attach it to the canvas
-    //     const camera = new BABYLON.ArcRotateCamera('Camera', Math.PI / 2, Math.PI / 2.6, 6, BABYLON.Vector3.Zero(), scene);
-    //     // camera.attachControl(this.canvas.nativeElement, true);
-
-    //     // Add lights to the scene
-    //     const light1 = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(3, 3, 0), scene);
-    //     const light2 = new BABYLON.PointLight('light2', new BABYLON.Vector3(-2, 3, 1), scene);
-
-    //     light1.intensity = 0.7;
-    //     light2.intensity = 0.7;
-
-    //     // create shadowmap below
-    //     const shadowGen1 = new BABYLON.ShadowGenerator(1024, light2);
-
-    //     // This is where you create and manipulate meshes
-    //     const cube = BABYLON.MeshBuilder.CreateBox('cube', {  }, scene);
-    //     shadowGen1.getShadowMap().renderList.push(cube);
-    //     cube.rotation = new BABYLON.Vector3(45, 45, 45);
-    //     cube.position = new BABYLON.Vector3(0, 0, 0);
-    //     // texture sphere below
-    //     const objMat = new BABYLON.StandardMaterial('cubeMat', scene);
-    //     objMat.diffuseColor = new BABYLON.Color3(.4, .3, .6);
-    //     cube.material = objMat;
-    //     this.rotator(cube);
-
-    //     const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 100, height: 100, subdivisions: 4 }, scene);
-    //     ground.position = new BABYLON.Vector3(0, -2, 0);
-    //     ground.receiveShadows = true;
-    //     return scene;
-    // }
-    // rotator(obj: BABYLON.Mesh) {
-    //     obj.rotate( new BABYLON.Vector3(0, 1, 0), .005, BABYLON.Space.WORLD);
-    //     setTimeout(() => {
-    //         this.rotator(obj);
-    //     }, 1);
-    // }
+        );
+// BABYLON.Tools.LoadFile('../../assets/scenes/grey-scene/scene/scenea7af9e4e-df35-4baa-91bc-29652ed697eb.editorproject',
+//     (data: string) => {
+//     Extensions.RoolUrl = '../../assets/scenes/';
+//     Extensions.ApplyExtensions(scene, JSON.parse(data));
+// });
+// BABYLON.Tools.LoadFile('../../assets/scenes/scene/project.editorproject', (data: string) => {
+//     Extensions.RoolUrl = '../../assets/scenes/scene/';
+//     Extensions.ApplyExtensions(scene, JSON.parse(data));
+// });
+this.engine.runRenderLoop(() => {
+    scene.render();
+});
+window.addEventListener('resize', () => {
+    this.engine.resize();
+});
+    }
 }
 
