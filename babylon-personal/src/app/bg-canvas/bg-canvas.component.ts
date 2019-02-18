@@ -27,10 +27,15 @@ export class BgCanvasComponent implements OnInit {
         BABYLON.SceneLoader.Append(
             // '../../assets/scenes/grey-scene/',
             // 'scene.babylon',
-            '../../assets/blender-babylon/',
-            'dendrite_greyscale_scene.babylon',
+            '../../assets/scenes/grey-scene/scene/',
+            'scene.babylon',
             scene
         );
+        // BABYLON.Tools.LoadFile('../../assets/scenes/grey-scene/scene/scenea7af9e4e-df35-4baa-91bc-29652ed697eb.editorproject',
+        //     (data: string) => {
+        //     Extensions.RoolUrl = '../../assets/scenes/';
+        //     Extensions.ApplyExtensions(scene, JSON.parse(data));
+        // });
         // BABYLON.Tools.LoadFile('../../assets/scenes/scene/project.editorproject', (data: string) => {
         //     Extensions.RoolUrl = '../../assets/scenes/scene/';
         //     Extensions.ApplyExtensions(scene, JSON.parse(data));
