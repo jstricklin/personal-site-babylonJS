@@ -1,5 +1,6 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
 import * as BABYLON from 'babylonjs';
+// import BABYLON from 'babylonjs';
 import { Extensions } from 'babylonjs-editor';
 
 @Component({
