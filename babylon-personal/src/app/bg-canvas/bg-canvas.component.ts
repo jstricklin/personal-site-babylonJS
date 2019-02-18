@@ -22,14 +22,19 @@ export class BgCanvasComponent implements OnInit {
         const scene = new BABYLON.Scene(this.engine);
         // Add a camera to the scene and attach it to the canvas
         const camera = new BABYLON.ArcRotateCamera('Camera', Math.PI / 2.5, Math.PI / 6, 12, BABYLON.Vector3.Zero(), scene);
-        camera.attachControl(this.canvas.nativeElement, true);
+        // camera.attachControl(this.canvas.nativeElement, true);
 
         BABYLON.SceneLoader.Append(
             // '../../assets/scenes/grey-scene/',
             // 'scene.babylon',
             '../../assets/scenes/grey-scene/scene/',
             'scene.babylon',
-            scene
+            scene,
+            (loadedScene: BABYLON.Scene) => {
+                console.log(loadedScene.activeCamera);
+                loadedScene.activeCamera.attachControl(this.canvas.nativeElement, true);
+                // camera.attachControl(this.canvas.nativeElement, true);
+            }
         );
         // BABYLON.Tools.LoadFile('../../assets/scenes/grey-scene/scene/scenea7af9e4e-df35-4baa-91bc-29652ed697eb.editorproject',
         //     (data: string) => {
