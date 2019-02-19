@@ -31,9 +31,16 @@ export class BgCanvasComponent implements OnInit {
             scene,
             (loadedScene: BABYLON.Scene) => {
                 this.particleInit(loadedScene);
-                loadedScene.activeCamera.attachControl(this.canvas.nativeElement, true);
+                // loadedScene.activeCamera.attachControl(this.canvas.nativeElement, true);
                 this.dofInit(loadedScene);
-                // loadedScene.activeCamera.inputs.add(new BABYLON.FreeCameraKeyboardMoveInput());
+                console.log('pre clear', loadedScene.activeCamera);
+                loadedScene.activeCamera.inputs.clear();
+                // loadedScene.activeCamera.inputs.addKeyboard(
+                loadedScene.activeCamera.attachControl(this.canvas.nativeElement, true);
+                loadedScene.activeCamera.inputs.add(new BABYLON.FlyCameraKeyboardInput());
+                loadedScene.activeCamera.inputs.add(new BABYLON.FreeCameraMouseInput());
+                // loadedScene.activeCamera.inputs.camera.speed = 0.1;
+                // console.log('post clear', loadedScene.activeCamera.inputs, loadedScene.activeCamera.speed);
                 // camera.attachControl(this.canvas.nativeElement, true);
             }
         );
