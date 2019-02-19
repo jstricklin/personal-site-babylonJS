@@ -58,7 +58,7 @@ export class BgCanvasComponent implements OnInit {
         motes.emitter = new BABYLON.Vector3(0, 0, 0);
         motes.minEmitBox = new BABYLON.Vector3(-5, -5, -5);
         motes.maxEmitBox = new BABYLON.Vector3(5, 5, 5);
-        motes.particleTexture = new BABYLON.Texture('../../assets/scenes/grey-scene/scene/mote-texture.png', scene);
+        motes.particleTexture = new BABYLON.Texture('../../assets/scenes/grey-scene/scene/mote-texture-blur.png', scene);
         // motes.color1 = new BABYLON.Color4(0, 0, 0, 0);
         // motes.color1 = new BABYLON.Color4(0.1, 0.1, 0.1, 0.1);
         // motes.colorDead = new BABYLON.Color4(0, 0, 0, 0);
@@ -90,8 +90,8 @@ export class BgCanvasComponent implements OnInit {
     dofInit(loadedScene: BABYLON.Scene) {
         const lensEffect = new BABYLON.LensRenderingPipeline('dof-lens', {
             edge_blur: 1.0,
-            // chromatic_aberration: 1.0,
-            distortion: .25,
+            chromatic_aberration: 0.75,
+            distortion: 0.25,
             dof_focus_distance: 4,
             dof_aperture: 2.0,
             grain_amount: 1.0,
