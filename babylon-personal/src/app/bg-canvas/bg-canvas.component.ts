@@ -32,7 +32,7 @@ export class BgCanvasComponent implements OnInit {
             (loadedScene: BABYLON.Scene) => {
                 this.particleInit(loadedScene);
                 loadedScene.activeCamera.attachControl(this.canvas.nativeElement, true);
-                // this.dofInit(loadedScene);
+                this.dofInit(loadedScene);
                 // loadedScene.activeCamera.inputs.add(new BABYLON.FreeCameraKeyboardMoveInput());
                 // camera.attachControl(this.canvas.nativeElement, true);
             }
@@ -54,7 +54,7 @@ export class BgCanvasComponent implements OnInit {
         });
     }
     particleInit(scene: BABYLON.Scene) {
-        const motes = new BABYLON.ParticleSystem('motes', 500, scene);
+        const motes = new BABYLON.ParticleSystem('motes', 1000, scene);
         motes.emitter = new BABYLON.Vector3(0, 0, 0);
         motes.minEmitBox = new BABYLON.Vector3(-5, -5, -5);
         motes.maxEmitBox = new BABYLON.Vector3(5, 5, 5);
@@ -72,7 +72,7 @@ export class BgCanvasComponent implements OnInit {
         motes.direction1 = new BABYLON.Vector3(-7, 8, 3);
         motes.direction2 = new BABYLON.Vector3(7, -8, -3);
 
-        motes.emitRate = 3;
+        motes.emitRate = 50;
 
         // angular speed
         motes.minAngularSpeed = 0;
@@ -93,7 +93,7 @@ export class BgCanvasComponent implements OnInit {
             // chromatic_aberration: 1.0,
             distortion: .25,
             dof_focus_distance: 4,
-            dof_aperture: 6.0,
+            dof_aperture: 3.5,
             grain_amount: 1.0,
             dof_pentagon: true,
             dof_gain: 1.0,
