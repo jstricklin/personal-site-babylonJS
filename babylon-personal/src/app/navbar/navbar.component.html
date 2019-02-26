@@ -4,6 +4,9 @@
             <h4>Neuronauta</h4>
             <p class='subtitle text-muted'>coming soon&trade; </p>
         </div>
+        <div>
+            <h6><span [ngClass]="{ 'text-muted': selectedTheme !== 'grey' }" (click)="setTheme('grey')">Grey</span> | <span [ngClass]="{ 'text-muted': selectedTheme !== 'color' }" (click)="setTheme('color')">Color</span></h6>
+        </div>
         <div class='d-flex flex-wrap align-items-center justify-content-center'>
             <p class='controls'>W A S D <span class='text-muted'>to explore</span></p> &middot;<p> Q E <span class='text-muted'>to ascend/descend</span></p> &middot; <p>Click & Drag <span class='text-muted'>to look around</span></p>
         </div>

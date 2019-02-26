@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 
 @Component({
   selector: 'app-navbar',
@@ -7,9 +7,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NavbarComponent implements OnInit {
 
+    @Output('changeTheme') changeTheme = new EventEmitter<string>();
+    @Input() selectedTheme: string;
+
   constructor() { }
 
   ngOnInit() {
+      this.selectedTheme = 'grey';
   }
+
+    setTheme(theme: string) {
+        this.changeTheme.emit(theme);
+    }
 
 }

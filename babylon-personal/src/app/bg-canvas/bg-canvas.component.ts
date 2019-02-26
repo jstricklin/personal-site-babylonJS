@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, OnChanges, Input } from '@angular/core';
 import * as BABYLON from 'babylonjs';
 import { Extensions } from 'babylonjs-editor';
 
@@ -12,12 +12,20 @@ const dendriteEmit = '../../assets/scenes/color-scene/dendrite-color-bake.png';
     templateUrl: './bg-canvas.component.html',
     styleUrls: ['./bg-canvas.component.scss']
 })
-export class BgCanvasComponent implements OnInit {
+export class BgCanvasComponent implements OnInit, OnChanges {
     @ViewChild('canvas') canvas;
     engine;
-
+    dendriteGreyMat: BABYLON.Material;
+    dendriteColorMat: BABYLON.PBRMaterial;
+    dendrites: BABYLON.AbstractMesh[];
+    @Input() selectedTheme = 'grey';
 
     constructor() { }
+
+    ngOnChanges() {
+        console.log('changes!@', this.selectedTheme);
+        this.setTheme(this.selectedTheme);
+    }
 
     ngOnInit() {
         // console.log(this.canvas.nativeElement);
@@ -29,44 +37,30 @@ export class BgCanvasComponent implements OnInit {
         camera.attachControl(this.canvas.nativeElement, true);
 
         BABYLON.SceneLoader.Append(
-            // '../../assets/scenes/grey-scene/',
-            // 'scene.babylon',
             '../../assets/scenes/grey-scene/scene/',
             'scene.babylon',
             scene,
             (loadedScene: BABYLON.Scene) => {
                 this.particleInit(loadedScene);
                 // loadedScene.activeCamera.attachControl(this.canvas.nativeElement, true);
-                this.dofInit(loadedScene);
-                console.log('pre clear', loadedScene.activeCamera);
-                loadedScene.activeCamera.inputs.clear();
-                // loadedScene.activeCamera.inputs.addKeyboard(
-                loadedScene.activeCamera.attachControl(this.canvas.nativeElement, true);
-                loadedScene.activeCamera.inputs.add(new BABYLON.FlyCameraKeyboardInput());
-                loadedScene.activeCamera.inputs.add(new BABYLON.FreeCameraMouseInput());
-                // loadedScene.activeCamera.inputs.camera.speed = 0.1;
-                // console.log('post clear', loadedScene.activeCamera.inputs, loadedScene.activeCamera.speed);
-                // camera.attachControl(this.canvas.nativeElement, true);
-                // get dendrites and update textures below
-                // console.log(loadedScene);
+                // console.log('pre clear', loadedScene.activeCamera);
                 loadedScene.ambientColor = new BABYLON.Color3(.3, .3, .5);
-                const dendrites = loadedScene.meshes.filter(mesh => mesh.name.includes('dendrite'));
-                // const color = new BABYLON.Color3( .3, .3, .3 );
-                const dendriteMat = new BABYLON.PBRMaterial('dendriteMatS', loadedScene);
-                console.log(dendriteMat);
-                dendriteMat.usePhysicalLightFalloff = false;
-                dendriteMat.useMicroSurfaceFromReflectivityMapAlpha = true;
-                dendriteMat.albedoTexture = new BABYLON.Texture(dendriteColor, loadedScene);
-                dendriteMat.reflectivityColor = new BABYLON.Color3( .3, .2, 1 );
-                dendriteMat.albedoColor = new BABYLON.Color3( .9, .2, 1 );
-                dendriteMat.bumpTexture = new BABYLON.Texture(dendriteNrmlMap, loadedScene);
-                dendriteMat.reflectivityTexture = new BABYLON.Texture(dendriteEmit, loadedScene);
-                dendriteMat.microSurface = .75;
-                dendriteMat.emissiveTexture = new BABYLON.Texture(dendriteEmit, loadedScene);
-                dendriteMat.emissiveIntensity = 5000;
-                dendrites[0].material = dendriteMat;
-                console.log(dendriteMat);
-                // console.log('dendrite mat', dendrites[0].material.ambientColor);
+                // loadedScene.cameras[1].speed = 0.1;
+                const flyCam = new BABYLON.FlyCamera('fly-cam', loadedScene.activeCamera.position, loadedScene);
+                flyCam.fov = 0.75;
+                flyCam.rotation =  new BABYLON.Vector3(0, 5.35, 0);
+                flyCam.speed = .1;
+                flyCam.angularSensibility = 250;
+                flyCam.rollCorrect = 50;
+                console.log('flycam input', flyCam.inputs);
+                console.log('main-cam', loadedScene.activeCamera);
+                loadedScene.activeCamera = flyCam;
+                loadedScene.activeCamera.attachControl(this.canvas.nativeElement, true);
+                console.log('fly-cam', loadedScene.activeCamera);
+                this.dendrites = loadedScene.meshes.filter(mesh => mesh.name.includes('dendrite'));
+                this.materialsInit(loadedScene);
+                this.dofInit(loadedScene);
+                this.setTheme(this.selectedTheme);
             }
         );
         // BABYLON.Tools.LoadFile('../../assets/scenes/grey-scene/scene/scenea7af9e4e-df35-4baa-91bc-29652ed697eb.editorproject',
@@ -84,6 +78,35 @@ export class BgCanvasComponent implements OnInit {
         window.addEventListener('resize', () => {
             this.engine.resize();
         });
+    }
+    setTheme(theme: string) {
+        if ( theme === 'grey' ) {
+            this.dendrites.map(dendrite => dendrite.material = this.dendriteGreyMat);
+        } else if ( theme === 'color' ) {
+            this.dendrites.map(dendrite => dendrite.material = this.dendriteColorMat);
+        }
+    }
+    materialsInit(loadedScene: BABYLON.Scene) {
+        // const color = new BABYLON.Color3( .3, .3, .3 );
+        this.dendriteGreyMat = this.dendrites[0].material;
+        this.dendriteColorMat = new BABYLON.PBRMaterial('dendriteMatS', loadedScene);
+        console.log(loadedScene.lights);
+        const lights = loadedScene.lights;
+        lights.map(light => light.intensity = 35);
+        // console.log(dendriteColorMat);
+        this.dendriteColorMat.usePhysicalLightFalloff = false;
+        this.dendriteColorMat.useRadianceOverAlpha = true;
+        this.dendriteColorMat.useMicroSurfaceFromReflectivityMapAlpha = true;
+        this.dendriteColorMat.albedoTexture = new BABYLON.Texture(dendriteColor, loadedScene);
+        this.dendriteColorMat.reflectivityColor = new BABYLON.Color3( .3, .2, 1 );
+        this.dendriteColorMat.albedoColor = new BABYLON.Color3( .9, .2, 1 );
+        this.dendriteColorMat.bumpTexture = new BABYLON.Texture(dendriteNrmlMap, loadedScene);
+        this.dendriteColorMat.reflectivityTexture = new BABYLON.Texture(dendriteEmit, loadedScene);
+        this.dendriteColorMat.microSurface = .75;
+        this.dendriteColorMat.emissiveTexture = new BABYLON.Texture(dendriteEmit, loadedScene);
+        this.dendriteColorMat.emissiveIntensity = 1000;
+        // console.log(dendriteColorMat);
+
     }
     particleInit(scene: BABYLON.Scene) {
         const motes = new BABYLON.ParticleSystem('motes', 500, scene);
@@ -130,7 +153,7 @@ export class BgCanvasComponent implements OnInit {
             dof_pentagon: true,
             dof_gain: 1.0,
             dof_threshold: 1.0,
-            dof_darken: 0.3,
+            dof_darken: 0.25,
         }, loadedScene, 1.0, [loadedScene.activeCamera]);
 
     }
