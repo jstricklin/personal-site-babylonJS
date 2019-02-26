@@ -2,6 +2,11 @@ import { Component, ViewChild, OnInit } from '@angular/core';
 import * as BABYLON from 'babylonjs';
 import { Extensions } from 'babylonjs-editor';
 
+const dendriteNrmlMap = '../../assets/scenes/grey-scene/scene/dendrite_bw_bake_01_nrm.png';
+const dendriteGrey = '../../assets/blender-babylon/dendrite_bw_bake_01.png';
+const dendriteColor = '../../assets/scenes/color-scene/dendrite-color-bake.png';
+const dendriteEmit = '../../assets/scenes/color-scene/dendrite-color-bake.png';
+
 @Component({
     selector: 'app-bg-canvas',
     templateUrl: './bg-canvas.component.html',
@@ -42,6 +47,26 @@ export class BgCanvasComponent implements OnInit {
                 // loadedScene.activeCamera.inputs.camera.speed = 0.1;
                 // console.log('post clear', loadedScene.activeCamera.inputs, loadedScene.activeCamera.speed);
                 // camera.attachControl(this.canvas.nativeElement, true);
+                // get dendrites and update textures below
+                // console.log(loadedScene);
+                loadedScene.ambientColor = new BABYLON.Color3(.3, .3, .5);
+                const dendrites = loadedScene.meshes.filter(mesh => mesh.name.includes('dendrite'));
+                // const color = new BABYLON.Color3( .3, .3, .3 );
+                const dendriteMat = new BABYLON.PBRMaterial('dendriteMatS', loadedScene);
+                console.log(dendriteMat);
+                dendriteMat.usePhysicalLightFalloff = false;
+                dendriteMat.useMicroSurfaceFromReflectivityMapAlpha = true;
+                dendriteMat.albedoTexture = new BABYLON.Texture(dendriteColor, loadedScene);
+                dendriteMat.reflectivityColor = new BABYLON.Color3( .3, .2, 1 );
+                dendriteMat.albedoColor = new BABYLON.Color3( .9, .2, 1 );
+                dendriteMat.bumpTexture = new BABYLON.Texture(dendriteNrmlMap, loadedScene);
+                dendriteMat.reflectivityTexture = new BABYLON.Texture(dendriteEmit, loadedScene);
+                dendriteMat.microSurface = .75;
+                dendriteMat.emissiveTexture = new BABYLON.Texture(dendriteEmit, loadedScene);
+                dendriteMat.emissiveIntensity = 5000;
+                dendrites[0].material = dendriteMat;
+                console.log(dendriteMat);
+                // console.log('dendrite mat', dendrites[0].material.ambientColor);
             }
         );
         // BABYLON.Tools.LoadFile('../../assets/scenes/grey-scene/scene/scenea7af9e4e-df35-4baa-91bc-29652ed697eb.editorproject',
