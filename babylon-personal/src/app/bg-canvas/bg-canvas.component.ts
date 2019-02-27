@@ -70,7 +70,7 @@ export class BgCanvasComponent implements OnInit, OnChanges {
                 this.dofInit(loadedScene);
                 // this.setTheme(this.selectedTheme);
                 this.lightsInit();
-                this.setTheme('color');
+                this.setTheme('grey');
                 this.loadedScene.onBeforeRenderObservable.add(function() {
                     t += 0.01;
                     gl.intensity = Math.cos(t) * 5 + 3;
@@ -111,6 +111,7 @@ export class BgCanvasComponent implements OnInit, OnChanges {
             this.dendrites.map(dendrite => dendrite.material = this.dendriteGreyMat);
             this.lights.map(light => {
                 // this.loadedScene.clearColor = new BABYLON.Color4( .1, .1, .1, 1 );
+                light.diffuse = new BABYLON.Color3(1, 1, 1);
                 light.intensity = 100;
                 light.intensityMode = BABYLON.Light.INTENSITYMODE_AUTOMATIC;
             });
@@ -196,7 +197,7 @@ export class BgCanvasComponent implements OnInit, OnChanges {
             dof_pentagon: true,
             dof_gain: 1.0,
             dof_threshold: 1.0,
-            // dof_darken: 0.25,
+            dof_darken: 0.3,
         }, loadedScene, 1.0, [loadedScene.activeCamera]);
 
     }
