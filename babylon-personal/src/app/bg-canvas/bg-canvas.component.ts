@@ -8,7 +8,7 @@ const dendriteColor = '../../assets/scenes/color-scene/dendrite-color-bake.png';
 const dendriteEmit = '../../assets/scenes/color-scene/dendrite-color-bake.png';
 const particleTexture = '../../assets/scenes/grey-scene/scene/mote-texture-blur.png';
 let t = 0.01;
-
+const pulse = (a, b) => Math.sin(t) * Math.cos(t) * Math.cos(t) * a + b;
 @Component({
     selector: 'app-bg-canvas',
     templateUrl: './bg-canvas.component.html',
@@ -23,7 +23,7 @@ export class BgCanvasComponent implements OnInit, OnChanges {
     loadedScene: BABYLON.Scene;
     motes: BABYLON.ParticleSystem;
     lights: BABYLON.Light[];
-    @Input() selectedTheme = 'grey';
+    @Input() selectedTheme;
 
     constructor() { }
 
@@ -32,6 +32,7 @@ export class BgCanvasComponent implements OnInit, OnChanges {
     }
 
     ngOnInit() {
+        this.selectedTheme = 'color';
         // console.log(this.canvas.nativeElement);
         this.engine = new BABYLON.Engine(this.canvas.nativeElement, true); // Generate the BABYLON 3D engine
         // const scene = this.createScene();
@@ -70,10 +71,10 @@ export class BgCanvasComponent implements OnInit, OnChanges {
                 this.dofInit(loadedScene);
                 // this.setTheme(this.selectedTheme);
                 this.lightsInit();
-                this.setTheme('grey');
-                this.loadedScene.onBeforeRenderObservable.add(function() {
+                this.setTheme(this.selectedTheme);
+                this.loadedScene.onBeforeRenderObservable.add(() => {
                     t += 0.001;
-                    gl.intensity = Math.cos(t) * 5 + 3;
+                    gl.intensity = pulse(5, 5);
                 });
             }
         );
@@ -127,7 +128,8 @@ export class BgCanvasComponent implements OnInit, OnChanges {
                 light.intensityMode = BABYLON.Light.INTENSITYMODE_LUMINOUSINTENSITY;
                 this.loadedScene.onBeforeRenderObservable.add(function() {
                     t += 0.001;
-                    light.intensity = Math.cos(t) * 900 + 1000;
+                    // light.intensity = Math.cos(t) * 900 + 1000;
+                    light.intensity = pulse(900, 1000);
                 });
             });
         }
@@ -155,7 +157,7 @@ export class BgCanvasComponent implements OnInit, OnChanges {
         this.dendriteColorMat = dendriteColorMat;
         loadedScene.onBeforeRenderObservable.add(function() {
             t += 0.001;
-            dendriteColorMat.emissiveIntensity = Math.cos(t) * 5 + 1;
+            dendriteColorMat.emissiveIntensity = pulse(10, 5);
         });
 
     }

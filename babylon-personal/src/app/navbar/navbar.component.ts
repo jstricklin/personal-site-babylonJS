@@ -13,7 +13,7 @@ export class NavbarComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-      this.selectedTheme = 'grey';
+      this.selectedTheme = 'color';
   }
 
     setTheme(theme: string) {
