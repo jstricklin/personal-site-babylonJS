@@ -75,7 +75,7 @@ export class BgCanvasComponent implements OnInit, OnChanges {
                 this.setTheme(this.selectedTheme);
                 this.loadedScene.onBeforeRenderObservable.add(() => {
                     t += 0.001;
-                    gl.intensity = pulse(10, 5);
+                    gl.intensity = pulse(5, 2.5);
                 });
             }
         );
@@ -99,21 +99,21 @@ export class BgCanvasComponent implements OnInit, OnChanges {
         this.lights = this.loadedScene.lights;
         this.lights.map(light => {
             light.intensity = 0;
-            light.intensityMode = BABYLON.Light.INTENSITYMODE_LUMINOUSINTENSITY;
+            light.intensityMode = BABYLON.Light.INTENSITYMODE_LUMINOUSPOWER;
             light.dispose();
         });
         const hemi = new BABYLON.HemisphericLight( 'hemiLight', new BABYLON.Vector3( 0, 1, 0 ), this.loadedScene );
         hemi.diffuse = new BABYLON.Color3( .3, .5, 1 );
         hemi.specular = new BABYLON.Color3( 1, 1, 1 );
-        hemi.groundColor = new BABYLON.Color3( 0, 0, .3 );
-        hemi.intensityMode = BABYLON.Light.INTENSITYMODE_LUMINOUSINTENSITY;
-        hemi.falloffType = BABYLON.Light.FALLOFF_PHYSICAL;
+        hemi.groundColor = new BABYLON.Color3( 0, 0, 0 );
+        hemi.intensityMode = BABYLON.Light.INTENSITYMODE_AUTOMATIC;
+        hemi.falloffType = BABYLON.Light.FALLOFF_DEFAULT;
         hemi.intensity = 1;
         hemi.radius = .1;
         // hemi.range = 5;
         this.loadedScene.onBeforeRenderObservable.add(function() {
             t += 0.001;
-            hemi.intensity = pulse(5, 5);
+            hemi.intensity = pulse(2, 1);
         });
 
     }
@@ -160,21 +160,30 @@ export class BgCanvasComponent implements OnInit, OnChanges {
         dendriteColorMat.useMicroSurfaceFromReflectivityMapAlpha = true;
         dendriteColorMat.albedoTexture = new BABYLON.Texture(dendriteGrey, loadedScene);
         dendriteColorMat.albedoColor = new BABYLON.Color3( .5, .2, 1 );
-        dendriteColorMat.reflectivityColor = new BABYLON.Color3( .3, .2, 1 );
+        dendriteColorMat.reflectivityColor = new BABYLON.Color3( 1, 1, 1 );
         dendriteColorMat.bumpTexture = new BABYLON.Texture(dendriteNrmlMap, loadedScene);
         dendriteColorMat.reflectivityTexture = new BABYLON.Texture(dendriteColor, loadedScene);
         // dendriteColorMat.ambientTexture = new BABYLON.Texture(dendriteEmit, loadedScene);
         // dendriteColorMat.ambientTextureStrength = 1000;
         dendriteColorMat.microSurface = .85;
+        // dendriteColorMat.environmentBRDFTexture = new BABYLON.Texture(dendriteEmit, loadedScene);
+        // dendriteColorMat.useAlphaFresnel = true;
+        // dendriteColorMat.useAlphaFromAlbedoTexture = true;
         dendriteColorMat.emissiveTexture = new BABYLON.Texture(dendriteEmit, loadedScene);
         dendriteColorMat.emissiveIntensity = 1000;
         dendriteColorMat.emissiveColor = new BABYLON.Color3( .5, .2, 1 );
+        dendriteColorMat.specularIntensity = 3;
+        // dendriteColorMat.transparencyMode = 1;
+        // dendriteColorMat.alpha = .5;
+        // dendriteColorMat.forceIrradianceInFragment = true;
+        // dendriteColorMat.useSpecularOverAlpha = true;
+        // dendriteColorMat.useAlphaFromAlbedoTexture = true;
         // console.log(dendriteColorMat);
         this.dendriteColorMat = dendriteColorMat;
         loadedScene.onBeforeRenderObservable.add(function() {
             t += 0.001;
             // make over 1000 for cancerous effect
-            dendriteColorMat.emissiveIntensity = pulse(5, 5);
+            dendriteColorMat.emissiveIntensity = pulse(5, 2.5);
         });
 
     }
