@@ -51,6 +51,7 @@ export class BgCanvasComponent implements OnInit, OnChanges {
                 gl.intensity = 1;
                 loadedScene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
                 this.particleInit(loadedScene);
+                // console.log(floor.position);
                 // loadedScene.activeCamera.attachControl(this.canvas.nativeElement, true);
                 // console.log('pre clear', loadedScene.activeCamera);
                 // loadedScene.ambientColor = new BABYLON.Color3(.3, .3, 1);
@@ -74,7 +75,7 @@ export class BgCanvasComponent implements OnInit, OnChanges {
                 this.setTheme(this.selectedTheme);
                 this.loadedScene.onBeforeRenderObservable.add(() => {
                     t += 0.001;
-                    gl.intensity = pulse(5, 5);
+                    gl.intensity = pulse(10, 5);
                 });
             }
         );
@@ -99,7 +100,22 @@ export class BgCanvasComponent implements OnInit, OnChanges {
         this.lights.map(light => {
             light.intensity = 0;
             light.intensityMode = BABYLON.Light.INTENSITYMODE_LUMINOUSINTENSITY;
+            light.dispose();
         });
+        const hemi = new BABYLON.HemisphericLight( 'hemiLight', new BABYLON.Vector3( 0, 1, 0 ), this.loadedScene );
+        hemi.diffuse = new BABYLON.Color3( .3, .5, 1 );
+        hemi.specular = new BABYLON.Color3( 1, 1, 1 );
+        hemi.groundColor = new BABYLON.Color3( 0, 0, .3 );
+        hemi.intensityMode = BABYLON.Light.INTENSITYMODE_LUMINOUSINTENSITY;
+        hemi.falloffType = BABYLON.Light.FALLOFF_PHYSICAL;
+        hemi.intensity = 1;
+        hemi.radius = .1;
+        // hemi.range = 5;
+        this.loadedScene.onBeforeRenderObservable.add(function() {
+            t += 0.001;
+            hemi.intensity = pulse(5, 5);
+        });
+
     }
     setTheme(theme: string) {
         if ( theme === 'grey' ) {
@@ -112,9 +128,9 @@ export class BgCanvasComponent implements OnInit, OnChanges {
             this.dendrites.map(dendrite => dendrite.material = this.dendriteGreyMat);
             this.lights.map(light => {
                 // this.loadedScene.clearColor = new BABYLON.Color4( .1, .1, .1, 1 );
-                light.diffuse = new BABYLON.Color3(1, 1, 1);
-                light.intensity = 100;
-                light.intensityMode = BABYLON.Light.INTENSITYMODE_AUTOMATIC;
+                // light.diffuse = new BABYLON.Color3(1, 1, 1);
+                // light.intensity = 100;
+                // light.intensityMode = BABYLON.Light.INTENSITYMODE_AUTOMATIC;
             });
         } else if ( theme === 'color' ) {
             this.motes.addColorGradient(0, new BABYLON.Color4(0, 0, 0, 0));
@@ -123,14 +139,14 @@ export class BgCanvasComponent implements OnInit, OnChanges {
             this.motes.addColorGradient(1, new BABYLON.Color4(0, 0, 0, 0));
             this.dendrites.map(dendrite => dendrite.material = this.dendriteColorMat);
             this.lights.map(light => {
-                light.intensity = 100;
-                light.diffuse = new BABYLON.Color3(0.3, 0.2, 1);
-                light.intensityMode = BABYLON.Light.INTENSITYMODE_LUMINOUSINTENSITY;
-                this.loadedScene.onBeforeRenderObservable.add(function() {
-                    t += 0.001;
+                // light.intensity = 100;
+                // light.diffuse = new BABYLON.Color3(0.3, 0.2, 1);
+                // light.intensityMode = BABYLON.Light.INTENSITYMODE_LUMINOUSINTENSITY;
+                // this.loadedScene.onBeforeRenderObservable.add(function() {
+                    // t += 0.001;
                     // light.intensity = Math.cos(t) * 900 + 1000;
-                    light.intensity = pulse(900, 1000);
-                });
+                    // light.intensity = pulse(900, 1000);
+                // });
             });
         }
     }
@@ -157,7 +173,8 @@ export class BgCanvasComponent implements OnInit, OnChanges {
         this.dendriteColorMat = dendriteColorMat;
         loadedScene.onBeforeRenderObservable.add(function() {
             t += 0.001;
-            dendriteColorMat.emissiveIntensity = pulse(10, 5);
+            // make over 1000 for cancerous effect
+            dendriteColorMat.emissiveIntensity = pulse(5, 5);
         });
 
     }
