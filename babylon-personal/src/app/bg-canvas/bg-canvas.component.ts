@@ -5,7 +5,7 @@ import { Extensions } from 'babylonjs-editor';
 const dendriteNrmlMap = '../../assets/scenes/grey-scene/scene/dendrite_bw_bake_01_nrm.png';
 const dendriteGrey = '../../assets/blender-babylon/dendrite_bw_bake_01.png';
 const dendriteColor = '../../assets/scenes/color-scene/dendrite-color-bake.png';
-const dendriteEmit = '../../assets/scenes/color-scene/dendrite-color-bake.png';
+const dendriteEmit = '../../assets/scenes/color-scene/dendrite-emit-bake-03.png';
 const particleTexture = '../../assets/scenes/grey-scene/scene/mote-texture-blur.png';
 let t = 0.01;
 const pulse = (a, b) => Math.sin(t) * Math.cos(t) * Math.cos(t) * a + b;
