@@ -55,7 +55,7 @@ export class BgCanvasComponent implements OnInit, OnChanges {
                     mainTextureFixedSize: 256,
                     blurKernelSize: 12
                 });
-                gl.intensity = 5;
+                gl.intensity = 3;
                 this.glow = gl;
                 loadedScene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
                 this.particleInit(loadedScene);
@@ -81,13 +81,13 @@ export class BgCanvasComponent implements OnInit, OnChanges {
                     const copy = dendrite.clone('dendrite-clone-' + i, null);
                     copy.scaling = new BABYLON.Vector3(1.1, 1.1, 1.1);
                     this.dendriteShells.push(copy);
-                    dendrite.setEnabled(false);
+                    dendrite.setEnabled(true);
                 });
                 this.materialsInit(loadedScene);
                 this.dofInit(loadedScene);
                 this.lightsInit();
                 this.setTheme(this.selectedTheme);
-                this.startPulse();
+                // this.startPulse();
             }
         );
         this.engine.runRenderLoop(() => {
@@ -193,27 +193,29 @@ export class BgCanvasComponent implements OnInit, OnChanges {
         // stard standard mat below
         const dendriteStanMat = new BABYLON.StandardMaterial('dendriteMatS', loadedScene);
         // dendriteStanMat.useGlossinessFromSpecularMapAlpha = true;
-        dendriteStanMat.emissiveTexture = new BABYLON.Texture(dendriteEmit, loadedScene);
         dendriteStanMat.emissiveColor = new BABYLON.Color3(.4, .2, 1);
         // dendriteStanMat.diffuseFresnelParameters = new BABYLON.FresnelParameters();
         // dendriteStanMat.diffuseFresnelParameters.bias = 0.6;
         // dendriteStanMat.diffuseFresnelParameters.power = 60;
-        dendriteStanMat.alpha = .75;
+        dendriteStanMat.alpha = .1;
         dendriteStanMat.opacityFresnelParameters = new BABYLON.FresnelParameters();
         dendriteStanMat.opacityFresnelParameters.leftColor = BABYLON.Color3.White();
         dendriteStanMat.opacityFresnelParameters.rightColor = BABYLON.Color3.Black();
-        dendriteStanMat.opacityFresnelParameters.bias = .5;
+        dendriteStanMat.opacityFresnelParameters.bias = .2;
         dendriteStanMat.opacityFresnelParameters.power = 2;
         // dendriteStanMat.backFaceCulling = true;
-        dendriteStanMat.emissiveColor = new BABYLON.Color3(1, 1, 1);
+        // dendriteStanMat.disableLighting = true;
+        // dendriteStanMat.emissiveTexture = new BABYLON.Texture(dendriteGrey, loadedScene);
+        dendriteStanMat.emissiveColor = new BABYLON.Color3(.5, .3, 1);
         dendriteStanMat.emissiveFresnelParameters = new BABYLON.FresnelParameters();
-        dendriteStanMat.emissiveFresnelParameters.bias = 0.1;
-        dendriteStanMat.emissiveFresnelParameters.power = .1;
-        // dendriteStanMat.diffuseTexture = new BABYLON.Texture(dendriteGrey, loadedScene);
+        dendriteStanMat.emissiveFresnelParameters.bias = 0.4;
+        dendriteStanMat.emissiveFresnelParameters.power = 10;
+        // dendriteStanMat.useAlphaFromDiffuseTexture = true;
+        dendriteStanMat.diffuseTexture = new BABYLON.Texture(dendriteGrey, loadedScene);
         dendriteStanMat.diffuseColor = new BABYLON.Color3(.4, .2, 1);
         // dendriteStanMat.specularTexture = new BABYLON.Texture(dendriteGrey, loadedScene);
-        // dendriteStanMat.specularPower = 32;
-        // dendriteStanMat.specularColor = new BABYLON.Color3(.4, .2, 1);
+        // dendriteStanMat.specularPower = 0;
+        dendriteStanMat.specularColor = new BABYLON.Color3(.4, .2, 1);
         dendriteStanMat.ambientColor = new BABYLON.Color3(.4, .2, 1);
         dendriteStanMat.bumpTexture = new BABYLON.Texture(dendriteNrmlMap, loadedScene);
         this.dendriteEnergyMat = dendriteStanMat;
